@@ -22,8 +22,6 @@ from fab_base import FabBase
 from grab_lfric import gpl_utils_source_config
 
 
-
-
 class FabMiniGungho(FabBase):
 
     def __init__(self, name="gungho_model", root_symbol=None):
@@ -57,11 +55,15 @@ class FabMiniGungho(FabBase):
         dirs = ['infrastructure/source/', 'components/driver/source/',
                 'components/inventory/source/', 'components/science/source/',
                 'components/lfric-xios/source/',
-                'miniapps/gungho_model/source/',
-                'miniapps/gungho_model/optimisation', 'gungho/source/']
+                'miniapps/gungho_model/source/', 'gungho/source/']
         # pylint: disable=redefined-builtin
         for dir in dirs:
-            grab_folder(self.config, src= self.lfric_root / dir, dst_label='')
+            grab_folder(self.config, src=self.lfric_root / dir, dst_label='')
+
+        # Copy the optimisation scripts into a separate directory
+        dir = 'miniapps/gungho_model/optimisation'
+        grab_folder(self.config, src=self.lfric_root / dir,
+                    dst_label='optimisation')
 
     def get_rose_meta(self):
         return (self.lfric_root / 'miniapps/gungho_model' / 'rose-meta' /
@@ -71,7 +73,7 @@ class FabMiniGungho(FabBase):
         ''':returns: the transformation script to be used by PSyclone.
         :rtype: Path
         '''
-        return self.config.source_root / "optimisation/nci-gadi/orig-global.py"
+        return self.config.source_root / "optimisation/nci-gadi/global.py"
 
 
 # -----------------------------------------------------------------------------
