@@ -91,7 +91,7 @@ class FabBase:
     def configurator(self):
         rose_meta = self.get_rose_meta()
         if rose_meta:
-            configurator(self.config, lfric_source=self.apps_root,
+            configurator(self.config, lfric_source=self.lfric_root,
                          gpl_utils_source=self.gpl_utils_source,
                          rose_meta_conf=rose_meta)
 
