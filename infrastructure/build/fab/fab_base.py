@@ -16,10 +16,11 @@ from pathlib import Path
 from fab.build_config import BuildConfig
 from fab.steps.analyse import analyse
 from fab.steps.archive_objects import archive_objects
+from fab.steps.c_pragma_injector import c_pragma_injector
 from fab.steps.compile_fortran import compile_fortran
 from fab.steps.find_source_files import find_source_files, Exclude
 from fab.steps.link import link_exe
-from fab.steps.preprocess import preprocess_fortran
+from fab.steps.preprocess import preprocess_c, preprocess_fortran
 from fab.steps.psyclone import psyclone, preprocess_x90
 
 from lfric_common import configurator, fparser_workaround_stop_concatenation
@@ -114,8 +115,13 @@ class FabBase:
                          gpl_utils_source=self.gpl_utils_source,
                          rose_meta_conf=rose_meta)
 
-    def preprocess_fortran(self):
-        preprocess_fortran(self.config, common_flags=self._preprocessor_flags)
+    def preprocess_c(self, path_flags=None):
+        preprocess_c(self.config, common_flags=self._preprocessor_flags,
+                           path_flags=path_flags)
+
+    def preprocess_fortran(self, path_flags=None):
+        preprocess_fortran(self.config, common_flags=self._preprocessor_flags,
+                           path_flags=path_flags)
 
     def preprocess_x90(self):
         preprocess_x90(self.config, common_flags=self._preprocessor_flags)
@@ -152,6 +158,8 @@ class FabBase:
             # generate more source files in source and source/configuration
             self.configurator()
             self.find_source_files()
+            c_pragma_injector(state)
+            self.preprocess_c()
             self.preprocess_fortran()
             self.preprocess_x90()
             self.psyclone()
