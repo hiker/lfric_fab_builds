@@ -158,7 +158,7 @@ class FabBase:
             # generate more source files in source and source/configuration
             self.configurator()
             self.find_source_files()
-            c_pragma_injector(state)
+            c_pragma_injector(self.config)
             self.preprocess_c()
             self.preprocess_fortran()
             self.preprocess_x90()
