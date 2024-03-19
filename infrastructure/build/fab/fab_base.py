@@ -101,9 +101,12 @@ class FabBase:
     def grab_files(self):
         pass
 
-    def find_source_files(self):
+    def find_source_files(self, path_filters=None):
+        if path_filters is None:
+            path_filters = []
         find_source_files(self.config,
-                          path_filters=[Exclude('unit-test', '/test/')])
+                          path_filters=([Exclude('unit-test', '/test/')] +
+                                        path_filters))
 
     def get_rose_meta(self):
         return ""
@@ -117,7 +120,7 @@ class FabBase:
 
     def preprocess_c(self, path_flags=None):
         preprocess_c(self.config, common_flags=self._preprocessor_flags,
-                           path_flags=path_flags)
+                     path_flags=path_flags)
 
     def preprocess_fortran(self, path_flags=None):
         preprocess_fortran(self.config, common_flags=self._preprocessor_flags,
