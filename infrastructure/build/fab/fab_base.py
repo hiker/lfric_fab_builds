@@ -56,25 +56,53 @@ class FabBase:
         self._compiler_flags = []
         self._link_flags = []
 
-        self.set_compiler_flags(
-            ['-ffree-line-length-none', '-fopenmp', '-g', '-std=f2008',
-             '-Wall', '-Werror=conversion', '-Werror=unused-variable',
-             '-Werror=character-truncation', '-Werror=unused-value',
-             '-Werror=tabs',
-             # The lib directory contains mpi.mod
-             '-I', ('/home/joerg/work/spack/var/spack/environments/lfric-v0/'
-                    '.spack-env/view/lib'),
-             # mod_wait.mod
-             '-I', ('/home/joerg/work/spack/var/spack/environments/lfric-v0/'
-                    '.spack-env/view/include')])
+        compiler = "intel"
+        if compiler == "intel":
+            self.set_compiler_flags(
+                [
+                '-c', '-g', '-r8', '-mcmodel=medium', '-traceback',
+                '-Wall', '-Werror=conversion', '-Werror=unused-variable',
+                '-Werror=character-truncation',
+                '-Werror=unused-value', '-Werror=tabs',
+                '-assume nosource_include',
+                '-qopenmp', '-O2', '-std08', '-fp-model=strict', '-fpe0',
+                '-DRDEF_PRECISION=64', '-DR_SOLVER_PRECISION=64', '-DR_TRAN_PRECISION=64',
+                '-DUSE_XIOS', '-DUSE_MPI=YES',
+            ])
+            self.set_link_flags(
+                ['-fopenmp',
+                 '-lyaxt', '-lyaxt_c', '-lxios', '-lnetcdff', '-lnetcdf',
+                 '-lhdf5', '-lstdc++'])
 
-        self.set_link_flags(
-            ['-fopenmp',
-             '-L', ('/home/joerg/work/spack/var/spack/environments/lfric-v0/'
-                    '.spack-env/view/lib'),
-             '-lyaxt', '-lyaxt_c', '-lxios', '-lnetcdff', '-lnetcdf',
-             '-lhdf5', '-lstdc++'])
-
+        elif compiler == "joerg":
+            self.set_compiler_flags(
+                ['-ffree-line-length-none', '-fopenmp', '-g',
+                 '-Werror=character-truncation', '-Werror=unused-value',
+                 '-Werror=tabs',
+                 '-fdefault-real-8',
+                 # The lib directory contains mpi.mod
+                 '-I', ('/home/joerg/work/spack/var/spack/environments/lfric-v0/'
+                        '.spack-env/view/lib'),
+                 # mod_wait.mod
+                 '-I', ('/home/joerg/work/spack/var/spack/environments/lfric-v0/'
+                        '.spack-env/view/include')])
+            self.set_link_flags(
+                ['-fopenmp',
+                 '-L', ('/home/joerg/work/spack/var/spack/environments/lfric-v0/'
+                        '.spack-env/view/lib'),
+                 '-lyaxt', '-lyaxt_c', '-lxios', '-lnetcdff', '-lnetcdf',
+                 '-lhdf5', '-lstdc++'])
+        else:
+            self.set_compiler_flags(
+                ['-ffree-line-length-none', '-fopenmp', '-g',
+                 '-Werror=character-truncation', '-Werror=unused-value',
+                 '-Werror=tabs',
+                 '-fdefault-real-8',
+                 ])
+            self.set_link_flags(
+                ['-fopenmp',
+                 '-lyaxt', '-lyaxt_c', '-lxios', '-lnetcdff', '-lnetcdf',
+                 '-lhdf5', '-lstdc++'])
     @property
     def config(self):
         ''':returns: the FAB BuildConfig instance.
