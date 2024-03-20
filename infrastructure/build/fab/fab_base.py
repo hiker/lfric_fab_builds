@@ -17,6 +17,7 @@ from fab.build_config import BuildConfig
 from fab.steps.analyse import analyse
 from fab.steps.archive_objects import archive_objects
 from fab.steps.c_pragma_injector import c_pragma_injector
+from fab.steps.compile_c import compile_c
 from fab.steps.compile_fortran import compile_fortran
 from fab.steps.find_source_files import find_source_files, Exclude
 from fab.steps.link import link_exe
@@ -90,13 +91,13 @@ class FabBase:
         return self._gpl_utils_source
 
     def set_preprocessor_flags(self, list_of_flags):
-        self._preprocessor_flags = list_of_flags
+        self._preprocessor_flags = list_of_flags[:]
 
     def set_compiler_flags(self, list_of_flags):
-        self._compiler_flags = list_of_flags
+        self._compiler_flags = list_of_flags[:]
 
     def set_link_flags(self, list_of_flags):
-        self._link_flags = list_of_flags
+        self._link_flags = list_of_flags[:]
 
     def grab_files(self):
         pass
@@ -142,6 +143,9 @@ class FabBase:
                 ignore_mod_deps=['netcdf', 'MPI', 'yaxt', 'pfunit_mod',
                                  'xios', 'mod_wait'])
 
+    def compile_c(self):
+        compile_c(self.config, common_flags=["-c"])
+
     def compile_fortran(self):
         compile_fortran(self.config,
                         common_flags=["-c"]+self._compiler_flags)
@@ -168,6 +172,7 @@ class FabBase:
             self.psyclone()
             fparser_workaround_stop_concatenation(self.config)
             self.analyse()
+            self.compile_c()
             self.compile_fortran()
             self.archive_objects()
             self.link()
