@@ -17,3 +17,6 @@ cp -r infrastructure $LFRIC
 
 # Copy the script for the miniapps
 cp -r miniapps $LFRIC
+
+# Copy the script for lfric_atm
+cp -r lfric_atm $LFRIC
